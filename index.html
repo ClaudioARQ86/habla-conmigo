@@ -3,809 +3,187 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>¡Habla Conmigo! 🌟</title>
+<title>Habla Conmigo</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #FFF8EE;
-    --card: #FFFFFF;
-    --primary: #FF6B6B;
-    --secondary: #4ECDC4;
-    --accent: #FFE66D;
-    --purple: #A78BFA;
-    --green: #6EE7B7;
-    --orange: #FB923C;
-    --text: #2D3748;
-    --shadow: 0 8px 32px rgba(0,0,0,0.12);
-    --radius: 28px;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: var(--bg);
-    min-height: 100vh;
-    overflow-x: hidden;
-    background-image:
-      radial-gradient(circle at 10% 20%, rgba(255,107,107,0.08) 0%, transparent 50%),
-      radial-gradient(circle at 90% 80%, rgba(78,205,196,0.08) 0%, transparent 50%),
-      radial-gradient(circle at 50% 50%, rgba(255,230,109,0.06) 0%, transparent 70%);
-  }
-
-  /* FLOATING STARS BG */
-  .stars-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-  .star { position: absolute; border-radius: 50%; opacity: 0.15; animation: float linear infinite; }
-
-  @keyframes float {
-    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-    10% { opacity: 0.15; }
-    90% { opacity: 0.15; }
-    100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
-  }
-
-  /* SCREEN MANAGEMENT */
-  .screen { display: none; min-height: 100vh; position: relative; z-index: 1; }
-  .screen.active { display: flex; flex-direction: column; align-items: center; }
-
-  /* ===== HOME SCREEN ===== */
-  #home {
-    justify-content: center;
-    padding: 40px 20px;
-    gap: 24px;
-  }
-
-  .home-header { text-align: center; }
-  .home-title {
-    font-family: 'Fredoka One', cursive;
-    font-size: clamp(2.5rem, 8vw, 4rem);
-    color: var(--primary);
-    line-height: 1.1;
-    text-shadow: 3px 3px 0 rgba(255,107,107,0.2);
-    animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  .home-subtitle {
-    font-size: 1.1rem;
-    color: #888;
-    margin-top: 6px;
-    font-weight: 700;
-  }
-  .home-emoji {
-    font-size: 5rem;
-    animation: bounce 2s ease-in-out infinite;
-    display: block;
-    margin-bottom: 12px;
-  }
-
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-  }
-  @keyframes popIn {
-    0% { transform: scale(0.5); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-  }
-
-  .activities-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    width: 100%;
-    max-width: 400px;
-  }
-
-  .activity-card {
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 24px 16px;
-    text-align: center;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-    transition: transform 0.15s, box-shadow 0.15s;
-    border: 3px solid transparent;
-    position: relative;
-    overflow: hidden;
-  }
-  .activity-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0.08;
-    border-radius: inherit;
-  }
-  .activity-card:nth-child(1) { border-color: var(--primary); }
-  .activity-card:nth-child(1)::before { background: var(--primary); }
-  .activity-card:nth-child(2) { border-color: var(--secondary); }
-  .activity-card:nth-child(2)::before { background: var(--secondary); }
-  .activity-card:nth-child(3) { border-color: var(--purple); }
-  .activity-card:nth-child(3)::before { background: var(--purple); }
-  .activity-card:nth-child(4) { border-color: var(--orange); }
-  .activity-card:nth-child(4)::before { background: var(--orange); }
-
-  .activity-card:active { transform: scale(0.94); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-
-  .activity-icon { font-size: 2.8rem; display: block; margin-bottom: 10px; }
-  .activity-name { font-family: 'Fredoka One', cursive; font-size: 1rem; color: var(--text); line-height: 1.2; }
-
-  /* ===== GAME SCREEN HEADER ===== */
-  .game-header {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: 16px 20px;
-    background: white;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    gap: 12px;
-  }
-  .back-btn {
-    background: var(--bg);
-    border: none;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    font-size: 1.4rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.1s;
-    flex-shrink: 0;
-  }
-  .back-btn:active { transform: scale(0.9); }
-  .game-title-bar {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.2rem;
-    color: var(--text);
-    flex: 1;
-  }
-  .stars-counter {
-    background: var(--accent);
-    border-radius: 20px;
-    padding: 6px 14px;
-    font-weight: 900;
-    font-size: 1rem;
-    color: #7C5B00;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  /* ===== GAME CONTENT ===== */
-  .game-content {
-    flex: 1;
-    width: 100%;
-    max-width: 480px;
-    padding: 24px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-  }
-
-  /* MAIN IMAGE CARD */
-  .main-card {
-    background: white;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    width: 100%;
-    padding: 32px 20px;
-    text-align: center;
-    position: relative;
-    cursor: pointer;
-    transition: transform 0.15s;
-    border: 4px solid var(--accent);
-  }
-  .main-card:active { transform: scale(0.97); }
-  .main-emoji-display { font-size: clamp(5rem, 20vw, 7rem); display: block; margin-bottom: 12px; animation: popIn 0.4s ease; }
-  .word-hidden {
-    font-family: 'Fredoka One', cursive;
-    font-size: 2rem;
-    color: #ccc;
-    letter-spacing: 8px;
-  }
-  .word-reveal {
-    font-family: 'Fredoka One', cursive;
-    font-size: 2.4rem;
-    color: var(--primary);
-    animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  .tap-hint {
-    font-size: 0.85rem;
-    color: #aaa;
-    margin-top: 8px;
-    font-weight: 700;
-  }
-
-  /* INSTRUCTION BOX */
-  .instruction-box {
-    background: linear-gradient(135deg, var(--secondary), #3BB5AD);
-    border-radius: 20px;
-    padding: 16px 20px;
-    color: white;
-    font-weight: 800;
-    font-size: 1.05rem;
-    text-align: center;
-    width: 100%;
-    box-shadow: 0 4px 16px rgba(78,205,196,0.4);
-  }
-
-  /* OPTIONS GRID (for association game) */
-  .options-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    width: 100%;
-  }
-  .option-btn {
-    background: white;
-    border: 3px solid #E8E8E8;
-    border-radius: 20px;
-    padding: 20px 10px;
-    font-size: 2.8rem;
-    cursor: pointer;
-    transition: all 0.15s;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-  }
-  .option-btn span { font-family: 'Fredoka One', cursive; font-size: 0.85rem; color: var(--text); }
-  .option-btn:active { transform: scale(0.93); }
-  .option-btn.correct { border-color: var(--green); background: #F0FFF8; animation: celebrate 0.5s ease; }
-  .option-btn.wrong { border-color: var(--primary); background: #FFF0F0; animation: shake 0.4s ease; }
-
-  @keyframes celebrate {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-  }
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-8px); }
-    75% { transform: translateX(8px); }
-  }
-
-  /* REPEAT WORD SCREEN */
-  .big-speak-btn {
-    background: linear-gradient(135deg, var(--primary), #FF8E8E);
-    border: none;
-    border-radius: 50%;
-    width: 140px;
-    height: 140px;
-    font-size: 4rem;
-    cursor: pointer;
-    box-shadow: 0 8px 32px rgba(255,107,107,0.4), 0 0 0 0 rgba(255,107,107,0.3);
-    transition: transform 0.15s;
-    animation: pulse-ring 2s ease-in-out infinite;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .big-speak-btn:active { transform: scale(0.9); }
-
-  @keyframes pulse-ring {
-    0%, 100% { box-shadow: 0 8px 32px rgba(255,107,107,0.4), 0 0 0 0 rgba(255,107,107,0.3); }
-    50% { box-shadow: 0 8px 32px rgba(255,107,107,0.4), 0 0 0 20px rgba(255,107,107,0); }
-  }
-
-  /* COMPLETE SENTENCE */
-  .sentence-display {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.6rem;
-    color: var(--text);
-    text-align: center;
-    line-height: 1.5;
-    background: white;
-    padding: 24px;
-    border-radius: 20px;
-    box-shadow: var(--shadow);
-    width: 100%;
-  }
-  .sentence-blank {
-    display: inline-block;
-    background: var(--accent);
-    color: #7C5B00;
-    padding: 2px 16px;
-    border-radius: 10px;
-    min-width: 80px;
-  }
-
-  /* NEXT BTN */
-  .next-btn {
-    background: linear-gradient(135deg, var(--secondary), #3BB5AD);
-    border: none;
-    border-radius: 50px;
-    padding: 16px 40px;
-    color: white;
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.3rem;
-    cursor: pointer;
-    box-shadow: 0 6px 20px rgba(78,205,196,0.4);
-    transition: transform 0.15s;
-    margin-top: 8px;
-  }
-  .next-btn:active { transform: scale(0.95); }
-  .next-btn:disabled { opacity: 0.4; }
-
-  /* CELEBRATION OVERLAY */
-  .celebration {
-    position: fixed;
-    inset: 0;
-    background: rgba(255,255,255,0.95);
-    z-index: 100;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    animation: fadeIn 0.3s ease;
-  }
-  .celebration.show { display: flex; }
-  .celebration-emoji { font-size: 6rem; animation: bounce 0.8s ease-in-out infinite; }
-  .celebration-text {
-    font-family: 'Fredoka One', cursive;
-    font-size: 2.5rem;
-    color: var(--primary);
-    text-align: center;
-  }
-  .celebration-sub { font-size: 1.1rem; color: #888; font-weight: 700; }
-
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-  /* CONFETTI PIECE */
-  .confetti-piece {
-    position: fixed;
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-    pointer-events: none;
-    z-index: 200;
-    animation: confettiFall 1.5s ease-in forwards;
-  }
-  @keyframes confettiFall {
-    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-  }
-
-  .hidden { display: none !important; }
-  .progress-bar-wrap {
-    width: 100%;
-    background: #EEE;
-    border-radius: 20px;
-    height: 12px;
-    overflow: hidden;
-  }
-  .progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--primary), var(--accent));
-    border-radius: 20px;
-    transition: width 0.4s ease;
-  }
+:root{--bg:#FFF8EE;--card:#FFF;--primary:#FF6B6B;--secondary:#4ECDC4;--accent:#FFE66D;--purple:#A78BFA;--green:#6EE7B7;--orange:#FB923C;--text:#2D3748;--shadow:0 8px 32px rgba(0,0,0,.12);--radius:28px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;overflow-x:hidden;background-image:radial-gradient(circle at 10% 20%,rgba(255,107,107,.08) 0%,transparent 50%),radial-gradient(circle at 90% 80%,rgba(78,205,196,.08) 0%,transparent 50%)}
+.stars-bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;border-radius:50%;opacity:.15;animation:float linear infinite}
+@keyframes float{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:.15}90%{opacity:.15}100%{transform:translateY(-100px) rotate(720deg);opacity:0}}
+.screen{display:none;min-height:100vh;position:relative;z-index:1}
+.screen.active{display:flex;flex-direction:column;align-items:center}
+#home{justify-content:center;padding:40px 20px;gap:24px}
+.home-header{text-align:center}
+.home-title{font-family:'Fredoka One',cursive;font-size:clamp(2.5rem,8vw,4rem);color:var(--primary);line-height:1.1;text-shadow:3px 3px 0 rgba(255,107,107,.2);animation:popIn .6s cubic-bezier(.34,1.56,.64,1)}
+.home-subtitle{font-size:1.1rem;color:#888;margin-top:6px;font-weight:700}
+.home-emoji{font-size:5rem;animation:bounce 2s ease-in-out infinite;display:block;margin-bottom:12px}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes popIn{0%{transform:scale(.5);opacity:0}100%{transform:scale(1);opacity:1}}
+.activities-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;max-width:400px}
+.activity-card{background:var(--card);border-radius:var(--radius);padding:24px 16px;text-align:center;cursor:pointer;box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s;border:3px solid transparent;position:relative;overflow:hidden}
+.activity-card::before{content:'';position:absolute;inset:0;opacity:.08;border-radius:inherit}
+.activity-card:nth-child(1){border-color:var(--primary)}.activity-card:nth-child(1)::before{background:var(--primary)}
+.activity-card:nth-child(2){border-color:var(--secondary)}.activity-card:nth-child(2)::before{background:var(--secondary)}
+.activity-card:nth-child(3){border-color:var(--purple)}.activity-card:nth-child(3)::before{background:var(--purple)}
+.activity-card:nth-child(4){border-color:var(--orange)}.activity-card:nth-child(4)::before{background:var(--orange)}
+.activity-card:active{transform:scale(.94)}
+.activity-icon{font-size:2.8rem;display:block;margin-bottom:10px}
+.activity-name{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--text);line-height:1.2}
+.stars-counter{background:var(--accent);border-radius:20px;padding:6px 14px;font-weight:900;font-size:1rem;color:#7C5B00;display:flex;align-items:center;gap:4px}
+.game-header{width:100%;display:flex;align-items:center;padding:16px 20px;background:white;box-shadow:0 2px 16px rgba(0,0,0,.07);position:sticky;top:0;z-index:10;gap:12px}
+.back-btn{background:var(--bg);border:none;width:44px;height:44px;border-radius:50%;font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.game-title-bar{font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--text);flex:1}
+.game-content{flex:1;width:100%;max-width:480px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;gap:20px}
+.main-card{background:white;border-radius:var(--radius);box-shadow:var(--shadow);width:100%;padding:32px 20px;text-align:center;cursor:pointer;transition:transform .15s;border:4px solid var(--accent)}
+.main-card:active{transform:scale(.97)}
+.main-emoji-display{font-size:clamp(5rem,20vw,7rem);display:block;margin-bottom:12px;animation:popIn .4s ease}
+.word-hidden{font-family:'Fredoka One',cursive;font-size:2rem;color:#ccc;letter-spacing:8px}
+.word-reveal{font-family:'Fredoka One',cursive;font-size:2.4rem;color:var(--primary);animation:popIn .4s cubic-bezier(.34,1.56,.64,1)}
+.tap-hint{font-size:.85rem;color:#aaa;margin-top:8px;font-weight:700}
+.instruction-box{background:linear-gradient(135deg,var(--secondary),#3BB5AD);border-radius:20px;padding:16px 20px;color:white;font-weight:800;font-size:1.05rem;text-align:center;width:100%;box-shadow:0 4px 16px rgba(78,205,196,.4)}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%}
+.option-btn{background:white;border:3px solid #E8E8E8;border-radius:20px;padding:20px 10px;font-size:2.8rem;cursor:pointer;transition:all .15s;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.08);display:flex;flex-direction:column;align-items:center;gap:6px}
+.option-btn span{font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--text)}
+.option-btn:active{transform:scale(.93)}
+.option-btn.correct{border-color:var(--green);background:#F0FFF8;animation:celebrate .5s ease}
+.option-btn.wrong{border-color:var(--primary);background:#FFF0F0;animation:shake .4s ease}
+@keyframes celebrate{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.big-speak-btn{background:linear-gradient(135deg,var(--primary),#FF8E8E);border:none;border-radius:50%;width:140px;height:140px;font-size:4rem;cursor:pointer;box-shadow:0 8px 32px rgba(255,107,107,.4),0 0 0 0 rgba(255,107,107,.3);transition:transform .15s;animation:pulse-ring 2s ease-in-out infinite;display:flex;align-items:center;justify-content:center}
+.big-speak-btn:active{transform:scale(.9)}
+@keyframes pulse-ring{0%,100%{box-shadow:0 8px 32px rgba(255,107,107,.4),0 0 0 0 rgba(255,107,107,.3)}50%{box-shadow:0 8px 32px rgba(255,107,107,.4),0 0 0 20px rgba(255,107,107,0)}}
+.sentence-display{font-family:'Fredoka One',cursive;font-size:1.6rem;color:var(--text);text-align:center;line-height:1.5;background:white;padding:24px;border-radius:20px;box-shadow:var(--shadow);width:100%}
+.sentence-blank{display:inline-block;background:var(--accent);color:#7C5B00;padding:2px 16px;border-radius:10px;min-width:80px}
+.next-btn{background:linear-gradient(135deg,var(--secondary),#3BB5AD);border:none;border-radius:50px;padding:16px 40px;color:white;font-family:'Fredoka One',cursive;font-size:1.3rem;cursor:pointer;box-shadow:0 6px 20px rgba(78,205,196,.4);transition:transform .15s;margin-top:8px}
+.next-btn:active{transform:scale(.95)}
+.next-btn:disabled{opacity:.4}
+.celebration{position:fixed;inset:0;background:rgba(255,255,255,.95);z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;animation:fadeIn .3s ease}
+.celebration.show{display:flex}
+.celebration-emoji{font-size:6rem;animation:bounce .8s ease-in-out infinite}
+.celebration-text{font-family:'Fredoka One',cursive;font-size:2.5rem;color:var(--primary);text-align:center}
+.celebration-sub{font-size:1.1rem;color:#888;font-weight:700}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.confetti-piece{position:fixed;width:12px;height:12px;border-radius:3px;pointer-events:none;z-index:200;animation:confettiFall 1.5s ease-in forwards}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.hidden{display:none!important}
+.progress-bar-wrap{width:100%;background:#EEE;border-radius:20px;height:12px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:20px;transition:width .4s ease}
 </style>
 </head>
 <body>
-
-<!-- FLOATING STARS -->
 <div class="stars-bg" id="starsBg"></div>
-
-<!-- CELEBRATION OVERLAY -->
 <div class="celebration" id="celebration">
-  <div class="celebration-emoji" id="celebEmoji">🌟</div>
-  <div class="celebration-text" id="celebText">¡Muy bien!</div>
-  <div class="celebration-sub" id="celebSub">¡Eso es!</div>
+  <div class="celebration-emoji" id="celebEmoji">&#127775;</div>
+  <div class="celebration-text" id="celebText">Muy bien!</div>
+  <div class="celebration-sub" id="celebSub">Eso es!</div>
 </div>
-
-<!-- ===== HOME ===== -->
 <div class="screen active" id="home">
   <div class="home-header">
-    <span class="home-emoji">🌈</span>
-    <div class="home-title">¡Habla Conmigo!</div>
-    <div class="home-subtitle">Juegos para aprender palabras ✨</div>
+    <span class="home-emoji">&#127752;</span>
+    <div class="home-title">Habla Conmigo!</div>
+    <div class="home-subtitle">Juegos para aprender palabras</div>
   </div>
   <div class="activities-grid">
-    <div class="activity-card" onclick="startGame('naming')">
-      <span class="activity-icon">🖼️</span>
-      <span class="activity-name">¿Qué es esto?</span>
-    </div>
-    <div class="activity-card" onclick="startGame('repeat')">
-      <span class="activity-icon">🔊</span>
-      <span class="activity-name">¡Repite conmigo!</span>
-    </div>
-    <div class="activity-card" onclick="startGame('sentence')">
-      <span class="activity-icon">💬</span>
-      <span class="activity-name">¡Completa la frase!</span>
-    </div>
-    <div class="activity-card" onclick="startGame('match')">
-      <span class="activity-icon">🎯</span>
-      <span class="activity-name">¡Encuentra la pareja!</span>
-    </div>
+    <div class="activity-card" onclick="startGame('naming')"><span class="activity-icon">&#128444;</span><span class="activity-name">Que es esto?</span></div>
+    <div class="activity-card" onclick="startGame('repeat')"><span class="activity-icon">&#128266;</span><span class="activity-name">Repite conmigo!</span></div>
+    <div class="activity-card" onclick="startGame('sentence')"><span class="activity-icon">&#128172;</span><span class="activity-name">Completa la frase!</span></div>
+    <div class="activity-card" onclick="startGame('match')"><span class="activity-icon">&#127919;</span><span class="activity-name">Encuentra la pareja!</span></div>
   </div>
-  <div class="stars-counter" style="margin-top:8px;">
-    ⭐ <span id="totalStars">0</span> estrellas totales
-  </div>
+  <div class="stars-counter" style="margin-top:8px">&#11088; <span id="totalStars">0</span> estrellas totales</div>
 </div>
-
-<!-- ===== NAMING GAME ===== -->
 <div class="screen" id="namingGame">
-  <div class="game-header">
-    <button class="back-btn" onclick="goHome()">←</button>
-    <div class="game-title-bar">🖼️ ¿Qué es esto?</div>
-    <div class="stars-counter">⭐ <span class="score-display">0</span></div>
-  </div>
+  <div class="game-header"><button class="back-btn" onclick="goHome()">&#8592;</button><div class="game-title-bar">Que es esto?</div><div class="stars-counter">&#11088; <span class="score-display">0</span></div></div>
   <div class="game-content">
     <div class="progress-bar-wrap"><div class="progress-bar-fill" id="namingProgress" style="width:0%"></div></div>
-    <div class="instruction-box">Toca la imagen y di la palabra en voz alta 🗣️</div>
+    <div class="instruction-box">Toca la imagen y di la palabra en voz alta!</div>
     <div class="main-card" onclick="revealWord('naming')">
-      <span class="main-emoji-display" id="namingEmoji">🐶</span>
+      <span class="main-emoji-display" id="namingEmoji">&#128054;</span>
       <div class="word-hidden" id="namingWordHidden">_ _ _ _ _</div>
       <div class="word-reveal hidden" id="namingWordReveal">PERRO</div>
-      <div class="tap-hint" id="namingHint">👆 ¡Toca para ver!</div>
+      <div class="tap-hint" id="namingHint">Toca para ver!</div>
     </div>
-    <button class="next-btn" id="namingNext" onclick="nextItem('naming')" disabled>Siguiente →</button>
+    <button class="next-btn" id="namingNext" onclick="nextItem('naming')" disabled>Siguiente</button>
   </div>
 </div>
-
-<!-- ===== REPEAT GAME ===== -->
 <div class="screen" id="repeatGame">
-  <div class="game-header">
-    <button class="back-btn" onclick="goHome()">←</button>
-    <div class="game-title-bar">🔊 ¡Repite conmigo!</div>
-    <div class="stars-counter">⭐ <span class="score-display">0</span></div>
-  </div>
+  <div class="game-header"><button class="back-btn" onclick="goHome()">&#8592;</button><div class="game-title-bar">Repite conmigo!</div><div class="stars-counter">&#11088; <span class="score-display">0</span></div></div>
   <div class="game-content">
     <div class="progress-bar-wrap"><div class="progress-bar-fill" id="repeatProgress" style="width:0%"></div></div>
-    <div class="instruction-box">Escucha la palabra y luego ¡repítela! 🎵</div>
-    <div class="main-card" style="cursor:default; border-color: var(--purple);">
-      <span class="main-emoji-display" id="repeatEmoji">🐱</span>
-      <div class="word-reveal" id="repeatWord" style="color: var(--purple);">GATO</div>
+    <div class="instruction-box">Escucha la palabra y repitela!</div>
+    <div class="main-card" style="cursor:default;border-color:var(--purple)">
+      <span class="main-emoji-display" id="repeatEmoji">&#128049;</span>
+      <div class="word-reveal" id="repeatWord" style="color:var(--purple)">GATO</div>
     </div>
-    <button class="big-speak-btn" onclick="speakWord()" id="speakBtn" title="Escuchar">🔊</button>
-    <button class="next-btn" onclick="nextItem('repeat')">¡Ya lo dije! →</button>
+    <button class="big-speak-btn" onclick="speakWord()" id="speakBtn">&#128266;</button>
+    <button class="next-btn" onclick="nextItem('repeat')">Ya lo dije!</button>
   </div>
 </div>
-
-<!-- ===== SENTENCE GAME ===== -->
 <div class="screen" id="sentenceGame">
-  <div class="game-header">
-    <button class="back-btn" onclick="goHome()">←</button>
-    <div class="game-title-bar">💬 ¡Completa la frase!</div>
-    <div class="stars-counter">⭐ <span class="score-display">0</span></div>
-  </div>
+  <div class="game-header"><button class="back-btn" onclick="goHome()">&#8592;</button><div class="game-title-bar">Completa la frase!</div><div class="stars-counter">&#11088; <span class="score-display">0</span></div></div>
   <div class="game-content">
     <div class="progress-bar-wrap"><div class="progress-bar-fill" id="sentenceProgress" style="width:0%"></div></div>
-    <div class="instruction-box">¿Qué falta? ¡Toca la respuesta correcta! 🤔</div>
-    <div class="sentence-display" id="sentenceText">
-      El <span class="sentence-blank">___</span> dice miau
-    </div>
+    <div class="instruction-box">Que falta? Toca la respuesta correcta!</div>
+    <div class="sentence-display" id="sentenceText">El <span class="sentence-blank">___</span> dice miau</div>
     <div class="options-grid" id="sentenceOptions"></div>
   </div>
 </div>
-
-<!-- ===== MATCH GAME ===== -->
 <div class="screen" id="matchGame">
-  <div class="game-header">
-    <button class="back-btn" onclick="goHome()">←</button>
-    <div class="game-title-bar">🎯 ¡Encuentra la pareja!</div>
-    <div class="stars-counter">⭐ <span class="score-display">0</span></div>
-  </div>
+  <div class="game-header"><button class="back-btn" onclick="goHome()">&#8592;</button><div class="game-title-bar">Encuentra la pareja!</div><div class="stars-counter">&#11088; <span class="score-display">0</span></div></div>
   <div class="game-content">
     <div class="progress-bar-wrap"><div class="progress-bar-fill" id="matchProgress" style="width:0%"></div></div>
-    <div class="instruction-box" id="matchInstruction">¿Qué imagen va con la palabra? 🎯</div>
-    <div class="sentence-display" id="matchTarget" style="font-size:1.8rem; border: 3px solid var(--accent);">
-      PERRO
-    </div>
+    <div class="instruction-box">Que imagen va con la palabra?</div>
+    <div class="sentence-display" id="matchTarget" style="font-size:1.8rem;border:3px solid var(--accent)">PERRO</div>
     <div class="options-grid" id="matchOptions"></div>
   </div>
 </div>
-
 <script>
-// ===== DATA =====
-const items = [
-  { emoji: '🐶', word: 'PERRO', syllables: 'PE-RRO', sentence: 'El ___ ladra', answer: 'PERRO', category: 'animal' },
-  { emoji: '🐱', word: 'GATO', syllables: 'GA-TO', sentence: 'El ___ dice miau', answer: 'GATO', category: 'animal' },
-  { emoji: '🐸', word: 'RANA', syllables: 'RA-NA', sentence: 'La ___ salta', answer: 'RANA', category: 'animal' },
-  { emoji: '🐔', word: 'POLLO', syllables: 'PO-LLO', sentence: 'El ___ hace cucu', answer: 'POLLO', category: 'animal' },
-  { emoji: '🍎', word: 'MANZANA', syllables: 'MAN-ZA-NA', sentence: 'La ___ es roja', answer: 'MANZANA', category: 'fruta' },
-  { emoji: '🍌', word: 'PLÁTANO', syllables: 'PLÁ-TA-NO', sentence: 'El ___ es amarillo', answer: 'PLÁTANO', category: 'fruta' },
-  { emoji: '🍓', word: 'FRESA', syllables: 'FRE-SA', sentence: 'La ___ es dulce', answer: 'FRESA', category: 'fruta' },
-  { emoji: '🚗', word: 'AUTO', syllables: 'AU-TO', sentence: 'El ___ va rápido', answer: 'AUTO', category: 'vehiculo' },
-  { emoji: '🚌', word: 'BUS', syllables: 'BUS', sentence: 'El ___ lleva niños', answer: 'BUS', category: 'vehiculo' },
-  { emoji: '✈️', word: 'AVIÓN', syllables: 'A-VIÓN', sentence: 'El ___ vuela alto', answer: 'AVIÓN', category: 'vehiculo' },
-  { emoji: '⭐', word: 'ESTRELLA', syllables: 'ES-TRE-LLA', sentence: 'La ___ brilla', answer: 'ESTRELLA', category: 'naturaleza' },
-  { emoji: '🌙', word: 'LUNA', syllables: 'LU-NA', sentence: 'La ___ sale de noche', answer: 'LUNA', category: 'naturaleza' },
-  { emoji: '☀️', word: 'SOL', syllables: 'SOL', sentence: 'El ___ da calor', answer: 'SOL', category: 'naturaleza' },
-  { emoji: '🎈', word: 'GLOBO', syllables: 'GLO-BO', sentence: 'El ___ vuela', answer: 'GLOBO', category: 'juguete' },
-  { emoji: '🎁', word: 'REGALO', syllables: 'RE-GA-LO', sentence: 'El ___ es bonito', answer: 'REGALO', category: 'juguete' },
-  { emoji: '🏠', word: 'CASA', syllables: 'CA-SA', sentence: 'La ___ es grande', answer: 'CASA', category: 'lugar' },
-  { emoji: '🌸', word: 'FLOR', syllables: 'FLOR', sentence: 'La ___ huele bien', answer: 'FLOR', category: 'naturaleza' },
-  { emoji: '🐠', word: 'PEZ', syllables: 'PEZ', sentence: 'El ___ nada', answer: 'PEZ', category: 'animal' },
-  { emoji: '🦋', word: 'MARIPOSA', syllables: 'MA-RI-PO-SA', sentence: 'La ___ es colorida', answer: 'MARIPOSA', category: 'animal' },
-  { emoji: '🍕', word: 'PIZZA', syllables: 'PI-ZZA', sentence: 'La ___ está caliente', answer: 'PIZZA', category: 'comida' },
+const items=[
+  {emoji:'&#128054;',word:'PERRO',syllables:'PE-RRO',sentence:'El ___ ladra'},
+  {emoji:'&#128049;',word:'GATO',syllables:'GA-TO',sentence:'El ___ dice miau'},
+  {emoji:'&#128056;',word:'RANA',syllables:'RA-NA',sentence:'La ___ salta'},
+  {emoji:'&#128020;',word:'POLLO',syllables:'PO-LLO',sentence:'El ___ hace cucu'},
+  {emoji:'&#127822;',word:'MANZANA',syllables:'MAN-ZA-NA',sentence:'La ___ es roja'},
+  {emoji:'&#127820;',word:'PLATANO',syllables:'PLA-TA-NO',sentence:'El ___ es amarillo'},
+  {emoji:'&#127827;',word:'FRESA',syllables:'FRE-SA',sentence:'La ___ es dulce'},
+  {emoji:'&#128663;',word:'AUTO',syllables:'AU-TO',sentence:'El ___ va rapido'},
+  {emoji:'&#128652;',word:'BUS',syllables:'BUS',sentence:'El ___ lleva ninos'},
+  {emoji:'&#9992;',word:'AVION',syllables:'A-VION',sentence:'El ___ vuela alto'},
+  {emoji:'&#11088;',word:'ESTRELLA',syllables:'ES-TRE-LLA',sentence:'La ___ brilla'},
+  {emoji:'&#127769;',word:'LUNA',syllables:'LU-NA',sentence:'La ___ sale de noche'},
+  {emoji:'&#9728;',word:'SOL',syllables:'SOL',sentence:'El ___ da calor'},
+  {emoji:'&#127880;',word:'GLOBO',syllables:'GLO-BO',sentence:'El ___ vuela'},
+  {emoji:'&#127873;',word:'REGALO',syllables:'RE-GA-LO',sentence:'El ___ es bonito'},
+  {emoji:'&#127968;',word:'CASA',syllables:'CA-SA',sentence:'La ___ es grande'},
+  {emoji:'&#127800;',word:'FLOR',syllables:'FLOR',sentence:'La ___ huele bien'},
+  {emoji:'&#128032;',word:'PEZ',syllables:'PEZ',sentence:'El ___ nada'},
+  {emoji:'&#129419;',word:'MARIPOSA',syllables:'MA-RI-PO-SA',sentence:'La ___ es colorida'},
+  {emoji:'&#127829;',word:'PIZZA',syllables:'PI-ZZA',sentence:'La ___ esta caliente'}
 ];
-
-let state = {
-  game: null,
-  index: 0,
-  score: 0,
-  totalStars: parseInt(localStorage.getItem('totalStars') || '0'),
-  revealed: false,
-  shuffledItems: []
-};
-
-// ===== UTILS =====
-function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
-
-function getShuffled() { return shuffle(items); }
-
-function updateTotalStars() {
-  document.getElementById('totalStars').textContent = state.totalStars;
-  localStorage.setItem('totalStars', state.totalStars);
-}
-
-function addStar() {
-  state.score++;
-  state.totalStars++;
-  document.querySelectorAll('.score-display').forEach(el => el.textContent = state.score);
-  updateTotalStars();
-}
-
-function updateProgress(game, idx) {
-  const pct = Math.round((idx / state.shuffledItems.length) * 100);
-  const bar = document.getElementById(game + 'Progress');
-  if (bar) bar.style.width = pct + '%';
-}
-
-// ===== SPEECH =====
-function speak(text) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'es-ES';
-  u.rate = 0.75;
-  u.pitch = 1.1;
-  window.speechSynthesis.speak(u);
-}
-
-// ===== CELEBRATION =====
-const cheers = [
-  { emoji: '🌟', text: '¡Muy bien!', sub: '¡Eres increíble!' },
-  { emoji: '🎉', text: '¡Excelente!', sub: '¡Sigue así!' },
-  { emoji: '🦄', text: '¡Genial!', sub: '¡Qué inteligente!' },
-  { emoji: '🏆', text: '¡Perfecto!', sub: '¡Lo lograste!' },
-  { emoji: '🌈', text: '¡Bravo!', sub: '¡Eres una estrella!' },
-  { emoji: '🚀', text: '¡Wow!', sub: '¡Qué rápido aprendes!' },
-];
-
-function celebrate(onDone) {
-  const c = cheers[Math.floor(Math.random() * cheers.length)];
-  document.getElementById('celebEmoji').textContent = c.emoji;
-  document.getElementById('celebText').textContent = c.text;
-  document.getElementById('celebSub').textContent = c.sub;
-  document.getElementById('celebration').classList.add('show');
-  launchConfetti();
-  speak(c.text.replace('¡', '').replace('!', ''));
-  setTimeout(() => {
-    document.getElementById('celebration').classList.remove('show');
-    if (onDone) onDone();
-  }, 1600);
-}
-
-function launchConfetti() {
-  const colors = ['#FF6B6B','#4ECDC4','#FFE66D','#A78BFA','#6EE7B7','#FB923C'];
-  for (let i = 0; i < 30; i++) {
-    setTimeout(() => {
-      const piece = document.createElement('div');
-      piece.className = 'confetti-piece';
-      piece.style.left = Math.random() * 100 + 'vw';
-      piece.style.top = '-20px';
-      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-      piece.style.animationDuration = (0.8 + Math.random() * 0.8) + 's';
-      piece.style.animationDelay = (Math.random() * 0.5) + 's';
-      document.body.appendChild(piece);
-      setTimeout(() => piece.remove(), 2000);
-    }, i * 30);
-  }
-}
-
-// ===== NAVIGATION =====
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0, 0);
-}
-
-function goHome() {
-  window.speechSynthesis && window.speechSynthesis.cancel();
-  showScreen('home');
-  updateTotalStars();
-}
-
-// ===== START GAMES =====
-function startGame(type) {
-  state.game = type;
-  state.index = 0;
-  state.score = 0;
-  state.revealed = false;
-  state.shuffledItems = getShuffled();
-  document.querySelectorAll('.score-display').forEach(el => el.textContent = '0');
-
-  if (type === 'naming') { showScreen('namingGame'); loadNaming(); }
-  else if (type === 'repeat') { showScreen('repeatGame'); loadRepeat(); }
-  else if (type === 'sentence') { showScreen('sentenceGame'); loadSentence(); }
-  else if (type === 'match') { showScreen('matchGame'); loadMatch(); }
-}
-
-function nextItem(type) {
-  state.index = (state.index + 1) % state.shuffledItems.length;
-  state.revealed = false;
-  if (type === 'naming') loadNaming();
-  else if (type === 'repeat') loadRepeat();
-  else if (type === 'sentence') loadSentence();
-  else if (type === 'match') loadMatch();
-}
-
-// ===== NAMING =====
-function loadNaming() {
-  const item = state.shuffledItems[state.index];
-  updateProgress('naming', state.index);
-  document.getElementById('namingEmoji').textContent = item.emoji;
-  document.getElementById('namingEmoji').style.animation = 'none';
-  setTimeout(() => document.getElementById('namingEmoji').style.animation = 'popIn 0.4s ease', 10);
-  const blanks = item.word.replace(/\S/g, '_ ').trim();
-  document.getElementById('namingWordHidden').textContent = blanks;
-  document.getElementById('namingWordHidden').classList.remove('hidden');
-  document.getElementById('namingWordReveal').textContent = item.word;
-  document.getElementById('namingWordReveal').classList.add('hidden');
-  document.getElementById('namingHint').textContent = '👆 ¡Toca para ver!';
-  document.getElementById('namingNext').disabled = true;
-  state.revealed = false;
-}
-
-function revealWord(type) {
-  if (state.revealed) return;
-  state.revealed = true;
-  const item = state.shuffledItems[state.index];
-  if (type === 'naming') {
-    document.getElementById('namingWordHidden').classList.add('hidden');
-    document.getElementById('namingWordReveal').classList.remove('hidden');
-    document.getElementById('namingHint').textContent = '🗣️ ¡Di la palabra en voz alta!';
-    document.getElementById('namingNext').disabled = false;
-    speak(item.word);
-    addStar();
-    celebrate(() => {});
-  }
-}
-
-// ===== REPEAT =====
-function loadRepeat() {
-  const item = state.shuffledItems[state.index];
-  updateProgress('repeat', state.index);
-  document.getElementById('repeatEmoji').textContent = item.emoji;
-  document.getElementById('repeatEmoji').style.animation = 'none';
-  setTimeout(() => document.getElementById('repeatEmoji').style.animation = 'popIn 0.4s ease', 10);
-  document.getElementById('repeatWord').textContent = item.syllables;
-  setTimeout(() => speak(item.word), 500);
-}
-
-function speakWord() {
-  const item = state.shuffledItems[state.index];
-  const btn = document.getElementById('speakBtn');
-  speak(item.word);
-  btn.style.transform = 'scale(1.15)';
-  setTimeout(() => btn.style.transform = '', 300);
-  addStar();
-  celebrate(() => {});
-}
-
-// ===== SENTENCE =====
-function loadSentence() {
-  const item = state.shuffledItems[state.index];
-  updateProgress('sentence', state.index);
-  // Build sentence with blank
-  const parts = item.sentence.split('___');
-  document.getElementById('sentenceText').innerHTML =
-    parts[0] + '<span class="sentence-blank">___</span>' + (parts[1] || '');
-  // Options: correct + 3 random wrong
-  const wrong = shuffle(items.filter(i => i.word !== item.word)).slice(0, 3);
-  const opts = shuffle([item, ...wrong]);
-  const grid = document.getElementById('sentenceOptions');
-  grid.innerHTML = '';
-  opts.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.className = 'option-btn';
-    btn.innerHTML = `${opt.emoji}<span>${opt.word}</span>`;
-    btn.onclick = () => checkSentence(btn, opt.word === item.word, item);
-    grid.appendChild(btn);
-  });
-}
-
-function checkSentence(btn, correct, item) {
-  document.querySelectorAll('#sentenceOptions .option-btn').forEach(b => b.onclick = null);
-  if (correct) {
-    btn.classList.add('correct');
-    const parts = item.sentence.split('___');
-    document.getElementById('sentenceText').innerHTML =
-      parts[0] + `<span class="sentence-blank" style="background:var(--green);color:#0a5c3a">${item.word}</span>` + (parts[1] || '');
-    addStar();
-    celebrate(() => nextItem('sentence'));
-  } else {
-    btn.classList.add('wrong');
-    setTimeout(() => {
-      btn.classList.remove('wrong');
-      // re-enable others
-      document.querySelectorAll('#sentenceOptions .option-btn').forEach(b => {
-        b.onclick = () => checkSentence(b, b.querySelector('span').textContent === item.word, item);
-      });
-    }, 600);
-    speak('Inténtalo de nuevo');
-  }
-}
-
-// ===== MATCH =====
-function loadMatch() {
-  const item = state.shuffledItems[state.index];
-  updateProgress('match', state.index);
-  document.getElementById('matchTarget').textContent = item.word;
-  const wrong = shuffle(items.filter(i => i.word !== item.word)).slice(0, 3);
-  const opts = shuffle([item, ...wrong]);
-  const grid = document.getElementById('matchOptions');
-  grid.innerHTML = '';
-  opts.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.className = 'option-btn';
-    btn.style.fontSize = '3.2rem';
-    btn.innerHTML = opt.emoji;
-    btn.onclick = () => checkMatch(btn, opt.word === item.word, item);
-    grid.appendChild(btn);
-  });
-  speak(item.word);
-}
-
-function checkMatch(btn, correct, item) {
-  document.querySelectorAll('#matchOptions .option-btn').forEach(b => b.onclick = null);
-  if (correct) {
-    btn.classList.add('correct');
-    addStar();
-    celebrate(() => nextItem('match'));
-  } else {
-    btn.classList.add('wrong');
-    setTimeout(() => {
-      btn.classList.remove('wrong');
-      document.querySelectorAll('#matchOptions .option-btn').forEach((b, i) => {
-        const opts = Array.from(grid.children);
-        b.onclick = () => checkMatch(b, /* re-check */ b === btn ? false : true, item);
-      });
-      loadMatch(); // simpler: just reload
-    }, 700);
-    speak('Inténtalo de nuevo');
-  }
-}
-
-// ===== FLOATING STARS BG =====
-(function initStars() {
-  const bg = document.getElementById('starsBg');
-  const colors = ['#FF6B6B','#FFE66D','#4ECDC4','#A78BFA','#6EE7B7','#FB923C'];
-  for (let i = 0; i < 18; i++) {
-    const star = document.createElement('div');
-    star.className = 'star';
-    const size = 8 + Math.random() * 16;
-    star.style.cssText = `
-      width:${size}px; height:${size}px;
-      left:${Math.random()*100}%;
-      background:${colors[Math.floor(Math.random()*colors.length)]};
-      animation-duration:${6+Math.random()*10}s;
-      animation-delay:${Math.random()*8}s;
-    `;
-    bg.appendChild(star);
-  }
-})();
-
-// Init total stars display
-updateTotalStars();
+let state={game:null,index:0,score:0,totalStars:parseInt(localStorage.getItem('ts')||'0'),revealed:false,items:[]};
+const shuffle=a=>[...a].sort(()=>Math.random()-.5);
+const upTotal=()=>{document.getElementById('totalStars').textContent=state.totalStars;localStorage.setItem('ts',state.totalStars)};
+const addStar=()=>{state.score++;state.totalStars++;document.querySelectorAll('.score-display').forEach(e=>e.textContent=state.score);upTotal()};
+const upProg=(g,i)=>{const b=document.getElementById(g+'Progress');if(b)b.style.width=Math.round(i/state.items.length*100)+'%'};
+const speak=t=>{if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='es-ES';u.rate=.75;u.pitch=1.1;window.speechSynthesis.speak(u)};
+const cheers=[{e:'&#127775;',t:'Muy bien!',s:'Eres increible!'},{e:'&#127881;',t:'Excelente!',s:'Sigue asi!'},{e:'&#129412;',t:'Genial!',s:'Que inteligente!'},{e:'&#127942;',t:'Perfecto!',s:'Lo lograste!'},{e:'&#127752;',t:'Bravo!',s:'Eres una estrella!'}];
+const celebrate=cb=>{const c=cheers[Math.floor(Math.random()*cheers.length)];document.getElementById('celebEmoji').innerHTML=c.e;document.getElementById('celebText').textContent=c.t;document.getElementById('celebSub').textContent=c.s;document.getElementById('celebration').classList.add('show');confetti();speak(c.t.replace(/!/g,''));setTimeout(()=>{document.getElementById('celebration').classList.remove('show');if(cb)cb()},1600)};
+const confetti=()=>{const cs=['#FF6B6B','#4ECDC4','#FFE66D','#A78BFA','#6EE7B7','#FB923C'];for(let i=0;i<30;i++)setTimeout(()=>{const p=document.createElement('div');p.className='confetti-piece';p.style.cssText='left:'+Math.random()*100+'vw;top:-20px;background:'+cs[Math.floor(Math.random()*cs.length)]+';animation-duration:'+(.8+Math.random()*.8)+'s;animation-delay:'+Math.random()*.5+'s';document.body.appendChild(p);setTimeout(()=>p.remove(),2000)},i*30)};
+const showScreen=id=>{document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)};
+const goHome=()=>{window.speechSynthesis&&window.speechSynthesis.cancel();showScreen('home');upTotal()};
+const startGame=t=>{state.game=t;state.index=0;state.score=0;state.revealed=false;state.items=shuffle(items);document.querySelectorAll('.score-display').forEach(e=>e.textContent='0');if(t==='naming'){showScreen('namingGame');loadN()}else if(t==='repeat'){showScreen('repeatGame');loadR()}else if(t==='sentence'){showScreen('sentenceGame');loadS()}else if(t==='match'){showScreen('matchGame');loadM()}};
+const nextItem=t=>{state.index=(state.index+1)%state.items.length;state.revealed=false;if(t==='naming')loadN();else if(t==='repeat')loadR();else if(t==='sentence')loadS();else if(t==='match')loadM()};
+function loadN(){const it=state.items[state.index];upProg('naming',state.index);document.getElementById('namingEmoji').innerHTML=it.emoji;document.getElementById('namingWordHidden').textContent=it.word.replace(/S/g,'_ ').trim();document.getElementById('namingWordHidden').classList.remove('hidden');document.getElementById('namingWordReveal').textContent=it.word;document.getElementById('namingWordReveal').classList.add('hidden');document.getElementById('namingHint').textContent='Toca para ver!';document.getElementById('namingNext').disabled=true;state.revealed=false}
+function revealWord(t){if(state.revealed)return;state.revealed=true;const it=state.items[state.index];if(t==='naming'){document.getElementById('namingWordHidden').classList.add('hidden');document.getElementById('namingWordReveal').classList.remove('hidden');document.getElementById('namingHint').textContent='Di la palabra en voz alta!';document.getElementById('namingNext').disabled=false;speak(it.word);addStar();celebrate(()=>{})}}
+function loadR(){const it=state.items[state.index];upProg('repeat',state.index);document.getElementById('repeatEmoji').innerHTML=it.emoji;document.getElementById('repeatWord').textContent=it.syllables;setTimeout(()=>speak(it.word),500)}
+function speakWord(){const it=state.items[state.index];const b=document.getElementById('speakBtn');speak(it.word);b.style.transform='scale(1.15)';setTimeout(()=>b.style.transform='',300);addStar();celebrate(()=>{})}
+function loadS(){const it=state.items[state.index];upProg('sentence',state.index);const p=it.sentence.split('___');document.getElementById('sentenceText').innerHTML=p[0]+'<span class="sentence-blank">___</span>'+(p[1]||'');const wrong=shuffle(items.filter(i=>i.word!==it.word)).slice(0,3);const opts=shuffle([it,...wrong]);const g=document.getElementById('sentenceOptions');g.innerHTML='';opts.forEach(o=>{const b=document.createElement('button');b.className='option-btn';b.innerHTML=o.emoji+'<span>'+o.word+'</span>';b.onclick=()=>chkS(b,o.word===it.word,it);g.appendChild(b)})}
+function chkS(btn,ok,it){document.querySelectorAll('#sentenceOptions .option-btn').forEach(b=>b.onclick=null);if(ok){btn.classList.add('correct');const p=it.sentence.split('___');document.getElementById('sentenceText').innerHTML=p[0]+'<span class="sentence-blank" style="background:var(--green);color:#0a5c3a">'+it.word+'</span>'+(p[1]||'');addStar();celebrate(()=>nextItem('sentence'))}else{btn.classList.add('wrong');setTimeout(()=>{btn.classList.remove('wrong');document.querySelectorAll('#sentenceOptions .option-btn').forEach(b=>{b.onclick=()=>chkS(b,b.querySelector('span').textContent===it.word,it)})},600);speak('Intentalo de nuevo')}}
+function loadM(){const it=state.items[state.index];upProg('match',state.index);document.getElementById('matchTarget').textContent=it.word;const wrong=shuffle(items.filter(i=>i.word!==it.word)).slice(0,3);const opts=shuffle([it,...wrong]);const g=document.getElementById('matchOptions');g.innerHTML='';opts.forEach(o=>{const b=document.createElement('button');b.className='option-btn';b.style.fontSize='3.2rem';b.innerHTML=o.emoji;b.onclick=()=>chkM(b,o.word===it.word,it);g.appendChild(b)});speak(it.word)}
+function chkM(btn,ok,it){document.querySelectorAll('#matchOptions .option-btn').forEach(b=>b.onclick=null);if(ok){btn.classList.add('correct');addStar();celebrate(()=>nextItem('match'))}else{btn.classList.add('wrong');setTimeout(()=>loadM(),700);speak('Intentalo de nuevo')}}
+(function(){const bg=document.getElementById('starsBg');const cs=['#FF6B6B','#FFE66D','#4ECDC4','#A78BFA','#6EE7B7','#FB923C'];for(let i=0;i<18;i++){const s=document.createElement('div');s.className='star';const sz=8+Math.random()*16;s.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+Math.random()*100+'%;background:'+cs[Math.floor(Math.random()*cs.length)]+';animation-duration:'+(6+Math.random()*10)+'s;animation-delay:'+Math.random()*8+'s';bg.appendChild(s)}})();
+upTotal();
 </script>
 </body>
 </html>
